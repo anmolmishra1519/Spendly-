@@ -1,14 +1,17 @@
 import { formatINR } from '@/utils/currency';
 import { spendingStatusMessage } from '@/utils/calculations';
+import { Pencil } from './icons';
 
 export function BalanceCard({
   available,
   budget,
   spentPercentage,
+  onEditBudget,
 }: {
   available: number;
   budget: number;
   spentPercentage: number;
+  onEditBudget?: () => void;
 }) {
   const overBudget = available < 0;
   const pctLabel = `${spentPercentage.toFixed(1)}% spent`;
@@ -31,16 +34,28 @@ export function BalanceCard({
         {overBudget ? `-${formatINR(Math.abs(available))}` : formatINR(available)}
       </p>
 
-      <p className="mt-2 text-sm text-muted dark:text-muted-dark">
-        {overBudget ? (
-          <>
-            <span className="font-semibold text-danger">{formatINR(Math.abs(available))} over budget</span> · of{' '}
-            {formatINR(budget)} budget
-          </>
-        ) : (
-          <>of {formatINR(budget)} budget</>
+      <div className="mt-2 flex items-center gap-2">
+        <p className="text-sm text-muted dark:text-muted-dark">
+          {overBudget ? (
+            <>
+              <span className="font-semibold text-danger">{formatINR(Math.abs(available))} over budget</span> · of{' '}
+              {formatINR(budget)} budget
+            </>
+          ) : (
+            <>of {formatINR(budget)} budget</>
+          )}
+        </p>
+        {onEditBudget && (
+          <button
+            onClick={onEditBudget}
+            aria-label="Edit budget"
+            title="Edit budget"
+            className="flex items-center justify-center rounded-full p-1 text-muted hover:bg-bg dark:hover:bg-white/10 hover:text-brand transition-colors"
+          >
+            <Pencil className="h-3.5 w-3.5" />
+          </button>
         )}
-      </p>
+      </div>
 
       <div className="mt-5">
         <div className="h-2 w-full overflow-hidden rounded-full bg-bg dark:bg-white/10">

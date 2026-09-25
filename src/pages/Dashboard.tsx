@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { useAppStore } from '@/stores/appStore';
 import { useMonthSummary, useCategoryBreakdown } from '@/hooks/useDerivedData';
@@ -7,6 +8,7 @@ import { DailySuggestionCard } from '@/components/DailySuggestionCard';
 import { CategoryBreakdownChart } from '@/components/CategoryBreakdownChart';
 import { RecentExpenses } from '@/components/RecentExpenses';
 import { PreviousMonths } from '@/components/PreviousMonths';
+import { EditBudgetModal } from '@/components/EditBudgetModal';
 
 type OutletCtx = { openAddExpense: () => void };
 
@@ -16,12 +18,18 @@ export function Dashboard() {
   const categories = useAppStore((s) => s.categories);
   const summary = useMonthSummary();
   const breakdown = useCategoryBreakdown();
+  const [editBudgetOpen, setEditBudgetOpen] = useState(false);
 
   if (!summary) return null;
 
   return (
     <div className="mx-auto max-w-6xl space-y-5 md:space-y-6">
-      <BalanceCard available={summary.available} budget={summary.month.budget} spentPercentage={summary.spentPercentage} />
+      <BalanceCard
+        available={summary.available}
+        budget={summary.month.budget}
+        spentPercentage={summary.spentPercentage}
+        onEditBudget={() => setEditBudgetOpen(true)}
+      />
 
       <SummaryCards
         budget={summary.month.budget}
@@ -47,6 +55,8 @@ export function Dashboard() {
       </div>
 
       <PreviousMonths />
+
+      <EditBudgetModal open={editBudgetOpen} onClose={() => setEditBudgetOpen(false)} />
     </div>
   );
 }
